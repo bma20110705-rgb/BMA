@@ -1,0 +1,924 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #EDEBE6;
+  --sheet: #F4F2ED;
+  --ink: #141414;
+  --muted: #6D6A63;
+  --cobalt: #1F3FB0;
+  --rule: rgba(20, 20, 20, 0.9);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --H: min(46vh, 31vw);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --H: min(60vw, 40svh);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: "Inter Tight", system-ui, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (pointer: fine) {
+  html,
+  body,
+  button,
+  a {
+    cursor: none !important;
+  }
+}
+
+/* Probe to measure --H in pixels */
+.h-probe {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 0;
+  height: var(--H);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Paper grain overlay */
+.paper-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .38 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  background-repeat: repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* Label & Box System */
+.lbl {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 10.5px;
+  line-height: 1;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 21px;
+  padding: 0 8px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 1.5px solid var(--cobalt);
+  outline-offset: 2px;
+}
+
+/* 1. Top Bar */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 84px;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  z-index: 30;
+}
+
+.top-back {
+  justify-self: start;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: var(--cobalt);
+}
+
+.logo-zh {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  padding-left: 0.04em;
+}
+
+.logo-en {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.34em;
+  padding-left: 0.34em;
+  text-transform: uppercase;
+}
+
+/* Language Switcher in Top Right (header > div:nth-of-type(2)) */
+.lang-switch {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 21px;
+  padding: 0 8px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  white-space: nowrap;
+  transition: background-color 0.35s var(--ease), color 0.35s var(--ease),
+    border-color 0.35s var(--ease);
+}
+
+.lang-btn + .lang-btn {
+  margin-left: -1px;
+}
+
+.lang-btn.on {
+  background-color: var(--cobalt);
+  border-color: var(--cobalt);
+  color: #ffffff;
+  z-index: 1;
+}
+
+/* 2. Decade Tabs */
+.tabs {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(50% - var(--H) / 2 - 86px);
+  display: inline-flex;
+  align-items: center;
+  z-index: 30;
+}
+
+.tab-ind {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 23px;
+  background-color: var(--cobalt);
+  pointer-events: none;
+  transition: transform 0.6s var(--ease), width 0.6s var(--ease);
+  will-change: transform, width;
+}
+
+.tab {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 23px;
+  padding: 0 11px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  white-space: nowrap;
+  transition: color 0.45s var(--ease);
+}
+
+.tab + .tab {
+  margin-left: -1px;
+}
+
+.tab.on {
+  color: #ffffff;
+}
+
+/* 3. The 3D Shelf Stage */
+.shelf {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  top: calc(50% - var(--H) / 2 - 40px);
+  height: calc(var(--H) + 80px);
+  perspective: 2200px;
+  perspective-origin: 50% 50%;
+  touch-action: pan-y;
+  z-index: 15;
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.tape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.face {
+  position: absolute;
+  height: var(--H);
+  top: calc(var(--H) * -0.5);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 2px;
+  background-color: #d8d2c5;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
+.face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  background: #000000;
+  opacity: var(--shade, 0);
+  pointer-events: none;
+}
+
+.face.sp {
+  width: var(--ws);
+  left: calc(var(--ws) * -0.5);
+}
+
+.face.cv {
+  width: var(--d);
+  left: calc(var(--d) * -0.5);
+  box-shadow: 0 30px 60px -28px rgba(20, 16, 10, 0.55);
+}
+
+/* 4. Play Ring */
+.play-ring {
+  position: fixed;
+  width: 42px;
+  height: 42px;
+  margin-left: -21px;
+  margin-top: -21px;
+  border-radius: 50%;
+  border: 1px solid var(--cobalt);
+  color: var(--cobalt);
+  background: rgba(237, 235, 230, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  padding: 0;
+  will-change: transform;
+}
+
+.play-tri {
+  width: 12px;
+  height: 12px;
+  transform: translateX(2px);
+  display: block;
+}
+
+/* 5. Caption */
+.caption {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(50% + var(--H) / 2 + 30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.cap-mask {
+  overflow: hidden;
+  width: min(92vw, 760px);
+  position: relative;
+  text-align: center;
+}
+
+.cap-mask > span {
+  display: block;
+  width: 100%;
+  will-change: transform;
+}
+
+.cap-mask > span + span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+}
+
+.cap-title {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 400;
+  font-size: 31px;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.cap-sub {
+  font-weight: 500;
+  color: var(--cobalt);
+}
+
+.cap-year {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+/* 6. Arrows */
+.arrow-btn {
+  position: fixed;
+  top: calc(50% + var(--H) / 2 + 40px);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  z-index: 30;
+  padding: 0;
+}
+
+.arrow-prev {
+  left: 20px;
+}
+
+.arrow-next {
+  right: 20px;
+}
+
+/* 7. Footer */
+.footer {
+  position: fixed;
+  left: 32px;
+  right: 32px;
+  bottom: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 30;
+}
+
+.foot-link {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* 8. Custom Cursor */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 58px;
+  height: 58px;
+  margin-left: -29px;
+  margin-top: -29px;
+  pointer-events: none;
+  z-index: 100;
+  display: none;
+  will-change: transform;
+}
+
+@media (pointer: fine) {
+  .cursor {
+    display: block;
+  }
+}
+
+.cur-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  background-color: transparent;
+  transform: scale(1);
+  transition: transform 0.5s var(--ease), background-color 0.4s var(--ease),
+    border-color 0.4s var(--ease);
+}
+
+.cur-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background-color: var(--ink);
+  transform: scale(1);
+  transition: transform 0.4s var(--ease);
+}
+
+.cur-lbl {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 9.5px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  text-align: center;
+  transform: scale(0);
+  transition: transform 0.45s var(--ease);
+}
+
+.cursor.spine .cur-ring {
+  transform: scale(0.72);
+}
+
+.cursor.btn .cur-ring {
+  transform: scale(0.55);
+}
+
+.cursor.btn .cur-dot {
+  transform: scale(0);
+}
+
+.cursor.open .cur-ring {
+  transform: scale(1.75);
+  background-color: var(--cobalt);
+  border-color: var(--cobalt);
+}
+
+.cursor.open .cur-dot {
+  transform: scale(0);
+}
+
+.cursor.open .cur-lbl {
+  transform: scale(1);
+}
+
+/* 9. Detail Sheet Dialog */
+.detail {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background-color: var(--sheet);
+  visibility: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4vw;
+  padding: 110px 6vw 56px 7vw;
+  align-items: center;
+  will-change: clip-path, transform;
+}
+
+.detail-close {
+  position: absolute;
+  left: 32px;
+  top: 31px;
+  z-index: 2;
+}
+
+.detail-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.detail-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 520px;
+  gap: 18px;
+}
+
+.d-mask {
+  overflow: hidden;
+  display: block;
+}
+
+.d-line {
+  display: block;
+  will-change: transform;
+}
+
+.d-sub {
+  font-weight: 500;
+  color: var(--cobalt);
+}
+
+.d-title {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(44px, 5.4vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.d-meta {
+  color: var(--muted);
+}
+
+.d-syn {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.5;
+  max-width: 42ch;
+  color: var(--ink);
+}
+
+.d-cred {
+  font-family: "Newsreader", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.detail-watch {
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--cobalt);
+  color: var(--cobalt);
+  background: transparent;
+}
+
+.detail-watch.playing {
+  background-color: var(--cobalt);
+  color: #ffffff;
+}
+
+.detail-ext-link {
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  background: transparent;
+}
+
+.detail-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+}
+
+.book-reader-wrap {
+  width: 100%;
+  height: min(100%, 78vh);
+  border: 1px solid var(--rule);
+  background: #141414;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.book-reader-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  flex: 1;
+}
+
+.poster-svg {
+  height: min(100%, 78vh);
+  width: auto;
+  max-width: 100%;
+  aspect-ratio: 474 / 900;
+  display: block;
+}
+
+/* 9b. Solo Leveling Interactive Manga Reader */
+.sl-reader {
+  width: 100%;
+  max-width: 560px;
+  height: min(100%, 80vh);
+  border: 1px solid var(--rule);
+  background: #0b0816;
+  color: #f4f2ed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 28px 60px -24px rgba(15, 10, 30, 0.7);
+}
+
+.sl-reader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #130d26;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.45);
+  flex-shrink: 0;
+}
+
+.sl-badge {
+  color: #38bdf8;
+}
+
+.sl-page-indicator {
+  color: #c084fc;
+}
+
+.manga-art-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  background: #070510;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.manga-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.5s var(--ease);
+}
+
+.manga-cover-zoom {
+  object-fit: cover;
+  object-position: center 18%;
+}
+
+.manga-svg-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.manga-bubble {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  padding: 8px 12px;
+  background: rgba(9, 7, 20, 0.88);
+  border: 1px solid #38bdf8;
+  color: #f8fafc;
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  border-radius: 2px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+}
+
+.manga-bubble-top {
+  top: 12px;
+  border-color: #a855f7;
+}
+
+.manga-bubble-bottom {
+  bottom: 12px;
+  border-color: #38bdf8;
+}
+
+.sl-reader-caption {
+  padding: 11px 14px;
+  background: #120d24;
+  border-top: 1px solid rgba(124, 58, 237, 0.4);
+  flex-shrink: 0;
+}
+
+.sl-reader-title {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.2;
+  color: #38bdf8;
+  margin-bottom: 4px;
+}
+
+.sl-reader-narration {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 13.5px;
+  line-height: 1.38;
+  color: #e2e8f0;
+}
+
+.sl-reader-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #090614;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  flex-shrink: 0;
+}
+
+.sl-nav-btn {
+  height: 30px;
+  padding: 0 11px;
+  border-color: #38bdf8;
+  color: #e0f2fe;
+  background: rgba(2, 132, 199, 0.18);
+  transition: background-color 0.25s var(--ease), opacity 0.25s var(--ease);
+}
+
+.sl-nav-btn:hover:not(:disabled) {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.sl-nav-btn:disabled {
+  opacity: 0.35;
+  border-color: #475569;
+  color: #94a3b8;
+}
+
+.sl-page-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sl-page-num {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(168, 85, 247, 0.55);
+  background: transparent;
+  color: #cbd5e1;
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+
+.sl-page-num.on {
+  background: #7c3aed;
+  border-color: #c084fc;
+  color: #ffffff;
+}
+
+/* 10. Responsive (<= 767px) */
+@media (max-width: 767px) {
+  .lbl {
+    font-size: 9px;
+  }
+
+  .top-bar {
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .logo-zh {
+    font-size: 17px;
+  }
+
+  .logo-en {
+    font-size: 7.5px;
+  }
+
+  .lang-btn {
+    height: 19px;
+    padding: 0 6px;
+    font-size: 8.5px;
+  }
+
+  .tabs {
+    top: calc(50% - var(--H) / 2 - 70px);
+  }
+
+  .tab {
+    padding: 0 7px;
+    font-size: 9px;
+  }
+
+  .cap-title {
+    font-size: 24px;
+  }
+
+  .arrow-prev {
+    left: 6px;
+  }
+
+  .arrow-next {
+    right: 6px;
+  }
+
+  .footer {
+    left: 16px;
+    right: 16px;
+    bottom: 18px;
+  }
+
+  .detail {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding: 84px 22px 40px;
+    gap: 24px;
+  }
+
+  .detail-close {
+    left: 16px;
+    top: 21px;
+  }
+
+  .detail-top {
+    height: 64px;
+  }
+
+  .detail-right {
+    order: -1;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .poster-svg {
+    height: 46svh;
+    margin: 0 auto;
+  }
+
+  .d-title {
+    font-size: 42px;
+  }
+
+  .d-syn {
+    font-size: 16px;
+  }
+
+  .cursor {
+    display: none !important;
+  }
+}
